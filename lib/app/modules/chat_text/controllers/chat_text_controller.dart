@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../common/headers.dart';
 import '../../../model/text_completion_model.dart';
+import 'package:translator/translator.dart';
 
 class ChatTextController extends GetxController {
   //TODO: Implement ChatTextController
@@ -28,15 +29,21 @@ class ChatTextController extends GetxController {
 
   var state = ApiState.notFound.obs;
 
+  final translator = GoogleTranslator();
+
   getTextCompletion(String query) async {
     addMyMessage();
 
     state.value = ApiState.loading;
 
+    var translationToEn =
+        await translator.translate("$query", from: 'my', to: 'en');
+    print('MM to EN ::: $translationToEn');
+
     try {
       Map<String, dynamic> rowParams = {
         "model": "text-davinci-003",
-        "prompt": query,
+        "prompt": translationToEn,
         'temperature': 0,
         'max_tokens': 2000,
         'top_p': 1,
@@ -56,8 +63,17 @@ class ChatTextController extends GetxController {
         // messages =
         //     TextCompletionModel.fromJson(json.decode(response.body)).choices;
         //
-        addServerMessage(
-            TextCompletionModel.fromJson(json.decode(response.body)).choices);
+
+        var message = json.decode(response.body)['choices'][0]['text'];
+        debugPrint('Message ::: $message');
+
+        var translationToMm =
+            await translator.translate("${message}", to: 'my');
+        print('En To Mm :: $translationToMm');
+        addServerTranslateMessage('$translationToMm');
+
+// addServerMessage(
+//             TextCompletionModel.fromJson(json.decode(response.body)).choices);
         searchTextController.clear();
         state.value = ApiState.success;
       } else {
@@ -76,6 +92,11 @@ class ChatTextController extends GetxController {
     for (int i = 0; i < choices.length; i++) {
       messages.insert(i, choices[i]);
     }
+  }
+
+  addServerTranslateMessage(String message) {
+    messages.insert(
+        0, TextCompletionData(text: message, index: 0, finish_reason: ''));
   }
 
   addMyMessage() {
