@@ -37,13 +37,13 @@ class ChatTextController extends GetxController {
     state.value = ApiState.loading;
 
     var translationToEn =
-        await translator.translate("$query", from: 'my', to: 'en');
+        await translator.translate("$query", from: 'auto', to: 'en');
     print('MM to EN ::: $translationToEn');
 
     try {
       Map<String, dynamic> rowParams = {
         "model": "text-davinci-003",
-        "prompt": translationToEn,
+        "prompt": '$translationToEn',
         'temperature': 0,
         'max_tokens': 2000,
         'top_p': 1,
