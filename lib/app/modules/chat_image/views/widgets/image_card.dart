@@ -21,13 +21,15 @@ class ImageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return MasonryGridView.builder(
         gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2),
+          crossAxisCount: 2,
+        ),
         mainAxisSpacing: 3,
         crossAxisSpacing: 3,
         itemCount: images?.length,
         itemBuilder: (context, index) {
           var url = images?[index].url ?? '';
 
+          print('image url :::::::::: $url');
           return Card(
             child: Column(
               children: [
@@ -36,19 +38,20 @@ class ImageCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
                       SizedBox(
-                          height: 150,
-                          width: 150,
-                          child: Shimmer.fromColors(
-                            baseColor: Colors.grey.withOpacity(.3),
-                            highlightColor: Colors.grey,
-                            child: Container(
-                              height: 220,
-                              width: 130,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4)),
-                            ),
-                          )),
+                    height: 150,
+                    width: 150,
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.withOpacity(.3),
+                      highlightColor: Colors.grey,
+                      child: Container(
+                        height: 220,
+                        width: 130,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4)),
+                      ),
+                    ),
+                  ),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
                 Padding(
